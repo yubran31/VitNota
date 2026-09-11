@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitNota | Sistema de Gestión Académica</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL */
+        .sidebar {
+            width: 250px;
+            background: #0b1f3a;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 30px;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2f80ed;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-title {
+            color: #8ea2bd;
+            font-size: 12px;
+            margin: 10px 12px;
+            text-transform: uppercase;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            margin: 5px 0;
+            border-radius: 8px;
+            color: #dce6f3;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #173961;
+            color: white;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 15px;
+            right: 15px;
+        }
+
+        /* CONTENIDO */
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+        }
+
+        .search {
+            width: 300px;
+            padding: 11px 15px;
+            border: 1px solid #d7deea;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #2f80ed;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .profile small {
+            color: #718096;
+        }
+
+        .content {
+            padding: 35px;
+        }
+
+        .welcome {
+            margin-bottom: 28px;
+        }
+
+        .welcome h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #718096;
+        }
+
+        /* TARJETAS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid #e5eaf1;
+            box-shadow: 0 3px 10px rgba(0,0,0,.04);
+        }
+
+        .card-title {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0b1f3a;
+        }
+
+        .card-info {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #48a868;
+        }
+
+        /* PANEL */
+        .panel {
+            background: white;
+            border: 1px solid #e5eaf1;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-header h2 {
+            font-size: 19px;
+        }
+
+        .btn {
+            background: #2f80ed;
+            color: white;
+            border: none;
+            padding: 10px 17px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #1769c2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px;
+            border-bottom: 1px solid #edf1f5;
+        }
+
+        th {
+            font-size: 13px;
+            color: #718096;
+            background: #f8fafc;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .approved {
+            background: #dff7e6;
+            color: #218542;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #9b7200;
+        }
+
+        /* SECCIONES */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 11px;
+            border: 1px solid #d7deea;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2f80ed;
+        }
+
+        @media(max-width: 900px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 650px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .app {
+                flex-direction: column;
+            }
+
+            .logout {
+                position: static;
+                margin-top: 20px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                padding: 15px;
+            }
+
+            .search {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- MENÚ -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">V</div>
+            VitNota
+        </div>
+
+        <div class="menu-title">Principal</div>
+
+        <nav class="menu">
+
+            <a class="active" onclick="mostrar('inicio', this)">
+                🏠 Inicio
+            </a>
+
+            <a onclick="mostrar('estudiantes', this)">
+                👨‍🎓 Estudiantes
+            </a>
+
+            <a onclick="mostrar('docentes', this)">
+                👨‍🏫 Docentes
+            </a>
+
+            <a onclick="mostrar('cursos', this)">
+                📚 Cursos
+            </a>
+
+            <a onclick="mostrar('periodos', this)">
+                📅 Períodos académicos
+            </a>
+
+            <a onclick="mostrar('calificaciones', this)">
+                📝 Calificaciones
+            </a>
+
+            <a onclick="mostrar('reportes', this)">
+                📊 Reportes
+            </a>
+
+            <div class="menu-title">Sistema</div>
+
+            <a onclick="mostrar('usuarios', this)">
+                👤 Usuarios
+            </a>
+
+            <a onclick="mostrar('configuracion', this)">
+                ⚙️ Configuración
+            </a>
+
+        </nav>
+
+        <div class="logout">
+            <a class="menu" onclick="alert('Sesión cerrada')">
+                🚪 Cerrar sesión
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENIDO -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <input
+                class="search"
+                type="text"
+                placeholder="Buscar..."
+            >
+
+            <div class="profile">
+
+                <div>
+                    <strong>Administrador</strong><br>
+                    <small>Administrador del sistema</small>
+                </div>
+
+                <div class="avatar">
+                    AD
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="content">
+
+
+            <!-- INICIO -->
+            <section id="inicio" class="section active">
+
+                <div class="welcome">
+                    <h1>Bienvenido a VitNota 👋</h1>
+                    <p>Sistema de Gestión Académica</p>
+                </div>
+
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="card-title">
+                            Estudiantes
+                        </div>
+
+                        <div class="card-number">
+                            248
+                        </div>
+
+                        <div class="card-info">
+                            ↑ 12% este período
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Docentes
+                        </div>
+
+                        <div class="card-number">
+                            32
+                        </div>
+
+                        <div class="card-info">
+                            Personal activo
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Cursos
+                        </div>
+
+                        <div class="card-number">
+                            48
+                        </div>
+
+                        <div class="card-info">
+                            Cursos registrados
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-title">
+                            Promedio general
+                        </div>
+
+                        <div class="card-number">
+                            82.5
+                        </div>
+
+                        <div class="card-info">
+                            ↑ 3.4% respecto al período anterior
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Actividad académica reciente</h2>
+
+                        <button class="btn">
+                            Ver todo
+                        </button>
+                    </div>
+
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Curso</th>
+                                <th>Calificación</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>María López</td>
+                                <td>Programación I</td>
+                                <td>92</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Aprobado
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Carlos Martínez</td>
+                                <td>Base de Datos</td>
+                                <td>85</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Aprobado
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Ana Rodríguez</td>
+                                <td>Matemática</td>
+                                <td>68</td>
+                                <td>
+                                    <span class="badge pending">
+                                        Pendiente
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ESTUDIANTES -->
+            <section id="estudiantes" class="section">
+
+                <div class="welcome">
+                    <h1>Estudiantes</h1>
+                    <p>Gestión de estudiantes registrados</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Lista de estudiantes</h2>
+
+                        <button class="btn" onclick="alert('Formulario para registrar estudiante')">
+                            + Nuevo estudiante
+                        </button>
+                    </div>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Carrera</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>001</td>
+                                <td>María López</td>
+                                <td>maria@email.com</td>
+                                <td>Ingeniería en Sistemas</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>002</td>
+                                <td>Carlos Martínez</td>
+                                <td>carlos@email.com</td>
+                                <td>Administración</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- DOCENTES -->
+            <section id="docentes" class="section">
+
+                <div class="welcome">
+                    <h1>Docentes</h1>
+                    <p>Administración del personal docente</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Docentes registrados</h2>
+
+                        <button class="btn">
+                            + Nuevo docente
+                        </button>
+                    </div>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Docente</th>
+                                <th>Especialidad</th>
+                                <th>Cursos</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>D001</td>
+                                <td>Roberto Pérez</td>
+                                <td>Programación</td>
+                                <td>3</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>D002</td>
+                                <td>Laura Gómez</td>
+                                <td>Matemática</td>
+                                <td>2</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- CURSOS -->
+            <section id="cursos" class="section">
+
+                <div class="welcome">
+                    <h1>Cursos</h1>
+                    <p>Administración de cursos académicos</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Cursos disponibles</h2>
+
+                        <button class="btn">
+                            + Nuevo curso
+                        </button>
+                    </div>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Curso</th>
+                                <th>Docente</th>
+                                <th>Créditos</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>PRG101</td>
+                                <td>Programación I</td>
+                                <td>Roberto Pérez</td>
+                                <td>4</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>BDD201</td>
+                                <td>Base de Datos</td>
+                                <td>Laura Gómez</td>
+                                <td>4</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- PERIODOS -->
+            <section id="periodos" class="section">
+
+                <div class="welcome">
+                    <h1>Períodos académicos</h1>
+                    <p>Administra los períodos académicos del sistema</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Registrar período</h2>
+
+                        <button class="btn">
+                            + Nuevo período
+                        </button>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>Nombre del período</label>
+                            <input
+                                type="text"
+                                placeholder="Ej: I Semestre 2026"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Año académico</label>
+                            <input
+                                type="number"
+                                placeholder="2026"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fecha de inicio</label>
+                            <input type="date">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fecha de finalización</label>
+                            <input type="date">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CALIFICACIONES -->
+            <section id="calificaciones" class="section">
+
+                <div class="welcome">
+                    <h1>Calificaciones</h1>
+                    <p>Consulta y administra las calificaciones</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Registro de calificaciones</h2>
+
+                        <button class="btn">
+                            + Registrar nota
+                        </button>
+                    </div>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Curso</th>
+                                <th>Parcial I</th>
+                                <th>Parcial II</th>
+                                <th>Promedio</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>María López</td>
+                                <td>Programación I</td>
+                                <td>90</td>
+                                <td>94</td>
+                                <td><strong>92</strong></td>
+                            </tr>
+
+                            <tr>
+                                <td>Carlos Martínez</td>
+                                <td>Base de Datos</td>
+                                <td>82</td>
+                                <td>88</td>
+                                <td><strong>85</strong></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- REPORTES -->
+            <section id="reportes" class="section">
+
+                <div class="welcome">
+                    <h1>Reportes académicos</h1>
+                    <p>Consulta información y genera reportes</p>
+                </div>
+
+                <div class="cards">
+
+                    <div class="card">
+                        <div class="card-title">Reporte de estudiantes</div>
+                        <div class="card-number">248</div>
+                        <button class="btn">Generar</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Reporte de notas</div>
+                        <div class="card-number">82.5</div>
+                        <button class="btn">Generar</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Cursos activos</div>
+                        <div class="card-number">48</div>
+                        <button class="btn">Generar</button>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- USUARIOS -->
+            <section id="usuarios" class="section">
+
+                <div class="welcome">
+                    <h1>Usuarios</h1>
+                    <p>Administración de usuarios y permisos</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Usuarios del sistema</h2>
+
+                        <button class="btn">
+                            + Nuevo usuario
+                        </button>
+                    </div>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Administrador</td>
+                                <td>admin@vitnota.com</td>
+                                <td>Administrador</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>docente01</td>
+                                <td>docente@vitnota.com</td>
+                                <td>Docente</td>
+                                <td>
+                                    <span class="badge approved">
+                                        Activo
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- CONFIGURACIÓN -->
+            <section id="configuracion" class="section">
+
+                <div class="welcome">
+                    <h1>Configuración</h1>
+                    <p>Configuración general del sistema</p>
+                </div>
+
+                <div class="panel">
+
+                    <h2 style="margin-bottom:20px;">
+                        Información institucional
+                    </h2>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>Nombre de la institución</label>
+                            <input
+                                type="text"
+                                value="Institución Académica"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Correo institucional</label>
+                            <input
+                                type="email"
+                                value="info@vitnota.com"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input
+                                type="text"
+                                placeholder="0000-0000"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Estado del sistema</label>
+
+                            <select>
+                                <option>Activo</option>
+                                <option>Mantenimiento</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <button class="btn">
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    function mostrar(id, elemento) {
+
+        // Ocultar todas las secciones
+        const secciones = document.querySelectorAll('.section');
+
+        secciones.forEach(seccion => {
+            seccion.classList.remove('active');
+        });
+
+        // Mostrar la sección seleccionada
+        document.getElementById(id).classList.add('active');
+
+        // Quitar active de todos los enlaces
+        const enlaces = document.querySelectorAll('.menu a');
+
+        enlaces.forEach(enlace => {
+            enlace.classList.remove('active');
+        });
+
+        // Activar el enlace seleccionado
+        elemento.classList.add('active');
+
+        // Volver arriba
+        window.scrollTo(0, 0);
+    }
+
+</script>
+
+</body>
+</html>
