@@ -27,7 +27,7 @@ jobs:
         run: dotnet build ./vitnotaAPI --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./vitnotaAPI-c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ./vitnotaAPI -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
